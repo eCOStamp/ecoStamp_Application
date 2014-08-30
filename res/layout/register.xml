@@ -45,13 +45,34 @@
           <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"
-                android:text="Full Name"/>
-          <EditText android:id="@+id/reg_fullname"
+                android:text="First Name"/>
+          <EditText android:id="@+id/fname"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:singleLine="true"
                 android:layout_marginBottom="20dip"/>
+          <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Last Name"/>
+          <EditText android:id="@+id/lname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:singleLine="true"
+                android:layout_marginBottom="20dip"/>
+          <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Username"/>
+          <EditText android:id="@+id/uname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:singleLine="true"
+                android:layout_marginBottom="20dip"/>
+          
             <!--  Email Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -61,13 +82,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:layout_marginBottom="20dip"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:id="@+id/email"/>
             <!-- Password Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"
                 android:text="Password"/>
-            <EditText android:id="@+id/reg_password" 
+            <EditText android:id="@+id/pword" 
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
@@ -89,6 +111,13 @@
                 android:gravity="center"
                 android:textSize="20dip"
                 android:textColor="#025f7c"/>
+            <TextView
+            	android:layout_width="fill_parent"
+            	android:layout_height="56dp"
+            	android:textColor="#000000"
+            	android:id="@+id/register_error"
+            	android:layout_below="@+id/btnRegister"
+            	android:layout_alignParentRight="true"/>
         </LinearLayout>
         <!-- Login Form Ends -->
         
