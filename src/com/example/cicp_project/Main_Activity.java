@@ -371,7 +371,8 @@ public class Main_Activity extends FragmentActivity {
 				username=db.getUsername();
 				((TableLayout)findViewById(R.id.table)).setVisibility(View.VISIBLE);
 				((TextView)findViewById(R.id.title)).setVisibility(View.VISIBLE);
-				
+				((TextView)findViewById(R.id.text_short_description)).setVisibility(View.VISIBLE);
+				((TextView)findViewById(R.id.text_description)).setVisibility(View.VISIBLE);
 				((TextView)findViewById(R.id.title)).setText(name+"\n");
 				((TextView)findViewById(R.id.url)).setText("Url :   ");
 				((TextView)findViewById(R.id.text_url)).setText(url+"\n");
