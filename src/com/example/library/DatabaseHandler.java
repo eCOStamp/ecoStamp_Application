@@ -31,13 +31,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_LOGIN + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"
-                + KEY_FIRSTNAME + " TEXT,"
-                + KEY_LASTNAME + " TEXT,"
-                + KEY_EMAIL + " TEXT UNIQUE,"
-                + KEY_USERNAME + " TEXT,"
-                + KEY_UID + " TEXT,"
-                + KEY_CREATED_AT + " TEXT" + ")";
+                //+ KEY_ID + " INTEGER PRIMARY KEY,"
+                //+ KEY_FIRSTNAME + " TEXT,"
+                //+ KEY_LASTNAME + " TEXT,"
+                //+ KEY_EMAIL + " TEXT UNIQUE,"
+                + KEY_USERNAME + " TEXT"
+                //+ KEY_UID + " TEXT,"
+                //+ KEY_CREATED_AT + " TEXT" 
+                + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
     }
     // Upgrading database
@@ -51,15 +52,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(String fname, String lname, String email, String uname, String uid, String created_at) {
+    public void addUser(String uname) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_FIRSTNAME, fname); // FirstName
-        values.put(KEY_LASTNAME, lname); // LastName
-        values.put(KEY_EMAIL, email); // Email
+        //values.put(KEY_FIRSTNAME, fname); // FirstName
+        //values.put(KEY_LASTNAME, lname); // LastName
+        //values.put(KEY_EMAIL, email); // Email 
         values.put(KEY_USERNAME, uname); // UserName
-        values.put(KEY_UID, uid); // Email
-        values.put(KEY_CREATED_AT, created_at); // Created At
+        //values.put(KEY_UID, uid); // Email
+        //values.put(KEY_CREATED_AT, created_at); // Created At
         // Inserting Row
         db.insert(TABLE_LOGIN, null, values);
         db.close(); // Closing database connection
@@ -67,6 +68,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Getting user data from database
      * */
+    public String getUsername(){
+    	String result = "";
+    	String userQuery = "SELECT  * FROM " + TABLE_LOGIN;
+    	SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(userQuery, null);
+    	
+    	cursor.moveToFirst();
+    	result = cursor.getString(0);
+    	db.close();
+    	cursor.close();
+    	return result;
+    }
+    
     public HashMap getUserDetails(){
         HashMap user = new HashMap();
         String selectQuery = "SELECT  * FROM " + TABLE_LOGIN;

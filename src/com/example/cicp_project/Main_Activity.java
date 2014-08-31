@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.BufferedReader;
@@ -48,6 +49,7 @@ import java.net.URL;//For load img
 import java.net.URLConnection;
 import android.view.View.OnClickListener;
 
+import com.example.library.DatabaseHandler;
 import com.example.library.TabPagerAdapter;
 
 public class Main_Activity extends FragmentActivity {
@@ -56,7 +58,7 @@ public class Main_Activity extends FragmentActivity {
 	// Default Pic for image loading test
 
 	private static final int PENDING_INTENT_TECH_DISCOVERED = 1;
-	private static final int DIALOG_WRITE_URL = 1;
+	private static final int DIALOG_COLLECTED = 1;
 	private static final int DIALOG_WRITE_ERROR = 2;
 	private static final int DIALOG_NEW_TAG = 3;
 	private static final String ARG_MESSAGE = "message";
@@ -188,6 +190,17 @@ public class Main_Activity extends FragmentActivity {
 									d.dismiss();
 								}
 							}).create();
+		case DIALOG_COLLECTED:
+			return new AlertDialog.Builder(this)
+					.setTitle("Conglaturation!!")
+					.setMessage("")
+					.setCancelable(true)
+					.setNeutralButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface d, int arg) {
+									d.dismiss();
+								}
+							}).create();
 		}
 
 		return null;
@@ -199,7 +212,14 @@ public class Main_Activity extends FragmentActivity {
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
 		switch (id) {
-		case DIALOG_WRITE_ERROR:
+		case DIALOG_COLLECTED:
+			if (args != null) {
+				String message = args.getString(ARG_MESSAGE);
+				if (message != null) {
+					((AlertDialog) dialog).setMessage(message);
+				}
+			}
+			break;
 		case DIALOG_NEW_TAG:
 			// Pass parameters to the tag detected and the write error dialog:
 			if (args != null) {
@@ -302,10 +322,12 @@ public class Main_Activity extends FragmentActivity {
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Server Connection related
 	private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+		String Stamp_Key,username;
 		@Override
 		protected String doInBackground(String... results) {
 			// What to do in background
 			// Ex. Call Server
+			Stamp_Key=results[0];
 			return POST("http://ecostamp.aosekai.net/api/stamp/"+results[0]+"/", "");
 		}
 
@@ -318,7 +340,7 @@ public class Main_Activity extends FragmentActivity {
 			if (result.contains("Exception_Catched!")
 					|| result.contains("Did not work!")) {
 
-				img.setImageResource(R.drawable.error);
+				//img.setImageResource(R.drawable.error);
 				// new LoadImage().execute(DefaultError_Url); //For Testing
 				StringBuilder tagInfo = new StringBuilder();
 				tagInfo.append("Result: \"");
@@ -327,14 +349,8 @@ public class Main_Activity extends FragmentActivity {
 				Bundle args = new Bundle();
 				args.putString(ARG_MESSAGE, tagInfo.toString());
 				showDialog(DIALOG_NEW_TAG, args);
+				
 			} else {
-				StringBuilder tagInfo = new StringBuilder();
-				tagInfo.append("Result: \"");
-				tagInfo.append(result);
-				tagInfo.append("\n");
-				Bundle args = new Bundle();
-				args.putString(ARG_MESSAGE, tagInfo.toString());
-				showDialog(DIALOG_NEW_TAG, args);
 				String name ="";
 				String image_url ="";
 				String url ="";
@@ -351,7 +367,16 @@ public class Main_Activity extends FragmentActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				((TextView)findViewById(R.id.text)).setText(name+"\n"+"Url: "+url+"\n"+"Short Description: "+short_description+"\n"+"Description: "+ description);
+				DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+				username=db.getUsername();
+				((TableLayout)findViewById(R.id.table)).setVisibility(View.VISIBLE);
+				((TextView)findViewById(R.id.title)).setVisibility(View.VISIBLE);
+				
+				((TextView)findViewById(R.id.title)).setText(name+"\n");
+				((TextView)findViewById(R.id.url)).setText("Url :   ");
+				((TextView)findViewById(R.id.text_url)).setText(url+"\n");
+				((TextView)findViewById(R.id.text_short_description)).setText(short_description+"\n");
+				((TextView)findViewById(R.id.text_description)).setText(description+"\n");
 				new LoadImage().execute(image_url); // Use this one in actual
 													// program
 				Button CollectButton,ReturnButton;
@@ -363,13 +388,39 @@ public class Main_Activity extends FragmentActivity {
 					 
 					@Override
 					public void onClick(View arg0) {
-		 
-					 
-		 
+						
+						//StringBuilder tagInfo = new StringBuilder();
+						//tagInfo.append("COLLECTED!!");
+						//Bundle args = new Bundle();
+						//args.putString(ARG_MESSAGE, tagInfo.toString());
+						//showDialog(DIALOG_NEW_TAG, args);
+						new Main_Activity.Collect().execute(username+"X#Z#"+Stamp_Key);
+						img.setImageResource(R.drawable.collect);
+						((TableLayout)findViewById(R.id.table)).setVisibility(View.GONE);
+						((TextView)findViewById(R.id.title)).setVisibility(View.GONE);
+						((TextView)findViewById(R.id.text_short_description)).setVisibility(View.GONE);
+						((TextView)findViewById(R.id.text_description)).setVisibility(View.GONE);
+						((Button)findViewById(R.id.CollectButton)).setVisibility(View.GONE);
+						((Button)findViewById(R.id.CancelButton)).setVisibility(View.GONE);
+					
 					}
 		 
 				});
 				
+				ReturnButton.setOnClickListener(new OnClickListener() {
+					 
+					@Override
+					public void onClick(View arg0) {
+						img.setImageResource(R.drawable.collect);
+						((TableLayout)findViewById(R.id.table)).setVisibility(View.GONE);
+						((TextView)findViewById(R.id.title)).setVisibility(View.GONE);
+						((Button)findViewById(R.id.CollectButton)).setVisibility(View.GONE);
+						((Button)findViewById(R.id.CancelButton)).setVisibility(View.GONE);
+						((TextView)findViewById(R.id.text_short_description)).setVisibility(View.GONE);
+						((TextView)findViewById(R.id.text_description)).setVisibility(View.GONE);
+					}
+		 
+				});
 			}
 		}
 	}
@@ -427,7 +478,76 @@ public class Main_Activity extends FragmentActivity {
 		inputStream.close();
 		return result;
 	}
-
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Collect
+	private class Collect extends AsyncTask<String, Void, String> {
+		@Override
+		protected String doInBackground(String... results) {
+			InputStream inputStream = null;
+			String username =results[0].split("X#Z#")[0];
+			String key =results[0].split("X#Z#")[1];
+			String result = "";
+			try {
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httpPost = new HttpPost("http://ecostamp.aosekai.net/api/collect/");
+				String json = "";
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.accumulate("username", username);
+				jsonObject.accumulate("key", key);
+				json = jsonObject.toString();
+				StringEntity se = new StringEntity(json);
+				httpPost.setEntity(se);
+				httpPost.setHeader("Accept", "application/json");
+				httpPost.setHeader("Content-type", "application/json");
+				HttpResponse httpResponse = httpclient.execute(httpPost);
+				inputStream = httpResponse.getEntity().getContent();
+				if (inputStream != null)
+					result = convertInputStreamToString(inputStream);
+				else
+					result = "Did not work!";
+			} catch (Exception e) {
+				result = "Exception_Catched!" + e.getLocalizedMessage();
+				Log.d("InputStream", e.getLocalizedMessage());
+			}
+			return result;
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			String Success ="";
+			try {
+				JSONObject jsonObject = new JSONObject(result);
+				Success = jsonObject.getString("success");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(Success.equals("true"))
+			{
+				Toast.makeText(Main_Activity.this,
+						"Your Stamp is collected",
+						Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+				Toast.makeText(Main_Activity.this,
+						"Error, John is dead!!! >.<",
+						Toast.LENGTH_SHORT).show();
+			}
+			/*
+			StringBuilder tagInfo = new StringBuilder();
+			tagInfo.append("Your Stamp is collected");
+			tagInfo.append("\n");
+			tagInfo.append(result);
+			Bundle args = new Bundle();
+			args.putString(ARG_MESSAGE, tagInfo.toString());
+			showDialog(DIALOG_COLLECTED, args);
+			*/
+		}
+	}
+	
+	
+	
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Others
 	private class LoadImage extends AsyncTask<String, String, Bitmap> {
@@ -470,9 +590,20 @@ public class Main_Activity extends FragmentActivity {
 
 			} else {
 				pDialog.dismiss();
+				StringBuilder tagInfo = new StringBuilder();
+				tagInfo.append("He's Dead, John!");
+				Bundle args = new Bundle();
+				args.putString(ARG_MESSAGE, tagInfo.toString());
+				showDialog(DIALOG_NEW_TAG, args);
 				Toast.makeText(Main_Activity.this,
 						"Image Does Not exist or Network Error",
 						Toast.LENGTH_SHORT).show();
+				((TableLayout)findViewById(R.id.table)).setVisibility(View.GONE);
+				((TextView)findViewById(R.id.title)).setVisibility(View.GONE);
+				((Button)findViewById(R.id.CollectButton)).setVisibility(View.GONE);
+				((Button)findViewById(R.id.CancelButton)).setVisibility(View.GONE);
+				((TextView)findViewById(R.id.text_short_description)).setVisibility(View.GONE);
+				((TextView)findViewById(R.id.text_description)).setVisibility(View.GONE);
 			}
 		}
 	}

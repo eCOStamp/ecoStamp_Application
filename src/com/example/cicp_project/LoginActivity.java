@@ -53,6 +53,7 @@ public class LoginActivity extends Activity {
         loginErrorMsg = (TextView) findViewById(R.id.loginErrorMsg);
         TextView registerScreen = (TextView) findViewById(R.id.link_to_register);
         
+        
         registerScreen.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -180,6 +181,12 @@ public class LoginActivity extends Activity {
 					if(res == "true"){
 						pDialog.setMessage("Loading User Space");
 						pDialog.setTitle("Getting Data");
+						DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+						//JSONObject json_user = json.getJSONObject("user");
+						
+						UserFunctions logout = new UserFunctions();
+						logout.logoutUser(getApplicationContext());
+						db.addUser(uname);
 						//DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 						//JSONObject json_user = json.getJSONObject("user");
 						

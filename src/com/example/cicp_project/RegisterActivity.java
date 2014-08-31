@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.library.DatabaseHandler;
 import com.example.library.UserFunctions;
 
 public class RegisterActivity extends Activity {
@@ -187,12 +188,12 @@ public class RegisterActivity extends Activity {
 						pDialog.setTitle("Getting Data");
 						pDialog.setMessage("Loading Info");
 						registerErrorMsg.setText("Successfully Registered");
-						/*DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-						JSONObject json_user = json.getJSONObject("user");
+						DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+						//JSONObject json_user = json.getJSONObject("user");
 						
 						UserFunctions logout = new UserFunctions();
 						logout.logoutUser(getApplicationContext());
-						db.addUser(json_user.getString(KEY_FIRSTNAME),json_user.getString(KEY_LASTNAME),json_user.getString(KEY_EMAIL),json_user.getString(KEY_USERNAME),json_user.getString(KEY_UID),json_user.getString(KEY_CREATED_AT));*/
+						db.addUser(uname);
 						
 						Intent registered = new Intent(getApplicationContext(), Main_Activity.class);
 						

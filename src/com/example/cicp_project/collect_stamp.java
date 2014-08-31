@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 
@@ -25,6 +26,9 @@ public class collect_stamp extends Fragment{
 		ReturnButton=(Button)android.findViewById(R.id.CancelButton);
 		CollectButton.setVisibility(View.GONE);
 		ReturnButton.setVisibility(View.GONE);
+		TableLayout table;
+		table=(TableLayout)android.findViewById(R.id.table);
+		table.setVisibility(View.GONE);
 		
 		return android;
 	}
